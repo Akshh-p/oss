@@ -1,0 +1,123 @@
+class Process:
+    def __init__(self, pid, arrival_time, burst_time):
+        self.pid = pid
+        self.arrival_time = arrival_time
+        self.burst_time = burst_time
+        self.remaining_time = burst_time
+        self.completion_time = 0
+        self.waiting_time = 0
+        self.turnaround_time = 0
+
+class Scheduler:
+    def __init__(self, processes):
+        self.processes = sorted(processes, key=lambda p: p.arrival_time)
+
+    def fcfs(self):
+        print("\n--- FCFS Scheduling ---")
+        time = 0
+        order = []
+        for p in self.processes:
+            if time < p.arrival_time:
+                time = p.arrival_time
+            p.waiting_time = time - p.arrival_time
+            time += p.burst_time
+            p.completion_time = time
+            p.turnaround_time = p.completion_time - p.arrival_time
+            order.append(p.pid)
+
+        self.display(self.processes, order)
+
+    def sjf(self):
+        print("\n--- SJF Scheduling ---")
+        time = 0
+        completed = []
+        ready_queue = []
+        processes = self.processes[:]
+        order = []
+
+        while processes or ready_queue:
+            while processes and processes[0].arrival_time <= time:
+                ready_queue.append(processes.pop(0))
+
+            if ready_queue:
+                ready_queue.sort(key=lambda p: p.burst_time)
+                current = ready_queue.pop(0)
+                order.append(current.pid)
+                current.waiting_time = time - current.arrival_time
+                time += current.burst_time
+                current.completion_time = time
+                current.turnaround_time = current.completion_time - current.arrival_time
+                completed.append(current)
+            else:
+                time += 1
+
+        self.display(completed, order)
+
+    def round_robin(self, quantum):
+        print("\n--- Round Robin Scheduling ---")
+        time = 0
+        queue = self.processes[:]
+        ready_queue = []
+        completed = []
+        visited = set()
+        order = []
+
+        while queue or ready_queue:
+            for p in queue:
+                if p.arrival_time <= time and p.pid not in visited:
+                    ready_queue.append(p)
+                    visited.add(p.pid)
+
+            if ready_queue:
+                current = ready_queue.pop(0)
+                order.append(current.pid)
+                exec_time = min(current.remaining_time, quantum)
+                time += exec_time
+                current.remaining_time -= exec_time
+
+                for p in queue:
+                    if p.arrival_time <= time and p.pid not in visited:
+                        ready_queue.append(p)
+                        visited.add(p.pid)
+
+                if current.remaining_time == 0:
+                    current.completion_time = time
+                    current.turnaround_time = current.completion_time - current.arrival_time
+                    current.waiting_time = current.turnaround_time - current.burst_time
+                    completed.append(current)
+                else:
+                    ready_queue.append(current)
+            else:
+                time += 1
+
+        self.display(completed, order)
+
+    def display(self, processes, order):
+        print("Execution Order:", ' → '.join(order))
+        print("PID\tArrival\tBurst\tWaiting\tTurnaround")
+        total_wait = 0
+        for p in processes:
+            total_wait += p.waiting_time
+            print(f"{p.pid}\t{p.arrival_time}\t{p.burst_time}\t{p.waiting_time}\t{p.turnaround_time}")
+        avg_wait = total_wait / len(processes)
+        print(f"Average Waiting Time: {avg_wait:.2f}")
+
+def main():
+    n = int(input("Enter number of processes: "))
+    processes = []
+    for i in range(n):
+        pid = input(f"\nEnter Process ID for process {i+1}: ")
+        at = int(input("Enter Arrival Time: "))
+        bt = int(input("Enter Burst Time: "))
+        processes.append(Process(pid, at, bt))
+
+    scheduler = Scheduler(processes)
+
+    scheduler.fcfs()
+    scheduler.sjf()
+    
+    quantum = int(input("\nEnter Quantum time for Round Robin: "))
+    scheduler.round_robin(quantum)
+
+if __name__ == "__main__":
+    main()
