@@ -1,0 +1,21 @@
+import threading
+import time
+
+# Define a function for the thread
+def thread_function():
+    print("Thread: Starting")
+    time.sleep(2)  # Simulate some work with sleep
+    print("Thread: Finished after sleeping")
+
+# Main program
+if __name__ == "__main__":
+    print("Main    : Creating thread")
+    my_thread = threading.Thread(target=thread_function)
+
+    print("Main    : Starting thread")
+    my_thread.start()  # Start the thread, moves it to 'Runnable' state
+
+    print("Main    : Waiting for thread to finish")
+    my_thread.join()  # Main thread waits until my_thread is done
+
+    print("Main    : Thread has completed")
