@@ -1,0 +1,51 @@
+import os
+import time
+import sys
+
+def demonstrate_zombie():
+    print("\n--- ZOMBIE PROCESS DEMO ---")
+    pid = os.fork()
+    
+    if pid == 0:
+        print(f"[Child] PID: {os.getpid()} exiting...")
+        sys.exit(0)
+    else:
+        print(f"[Parent] PID: {os.getpid()}, sleeping to keep child zombie...")
+        time.sleep(10)  # Child becomes zombie until parent calls wait
+        os.wait()  # Now parent reaps the zombie
+        print("[Parent] Collected zombie child.")
+
+def demonstrate_orphan():
+    print("\n--- ORPHAN PROCESS DEMO ---")
+    pid = os.fork()
+    
+    if pid == 0:
+        print(f"[Child] PID: {os.getpid()}, sleeping to outlive parent...")
+        time.sleep(5)
+        print(f"[Child] My new parent is PID: {os.getppid()}")
+    else:
+        print(f"[Parent] PID: {os.getpid()}, exiting...")
+        sys.exit(0)
+
+def demonstrate_execve():
+    print("\n--- EXECVE SYSTEM CALL DEMO ---")
+    pid = os.fork()
+    
+    if pid == 0:
+        print(f"[Child] PID: {os.getpid()} executing 'ls' command using execve...")
+        os.execve("/bin/ls", ["ls", "-l"], os.environ)
+        # This line won't be executed if execve is successful
+        print("[Child] This will not be printed if execve works.")
+    else:
+        os.wait()
+        print("[Parent] Finished waiting for child.")
+
+def main():
+    demonstrate_zombie()
+    time.sleep(2)
+    demonstrate_orphan()
+    time.sleep(6)  # Wait for orphan to finish
+    demonstrate_execve()
+
+if __name__ == "__main__":
+    main()
