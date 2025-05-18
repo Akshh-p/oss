@@ -1,0 +1,68 @@
+def fcfs(processes):
+    n = len(processes)
+    processes.sort(key=lambda x: x[1])
+    wt = [0] * n
+    tat = [0] * n
+    for i in range(1, n):
+        wt[i] = wt[i-1] + processes[i-1][2]
+    for i in range(n):
+        tat[i] = wt[i] + processes[i][2]
+    avg_wt = sum(wt) / n
+    avg_tat = sum(tat) / n
+    return wt, tat, avg_wt, avg_tat
+
+def sjf(processes):
+    n = len(processes)
+    processes.sort(key=lambda x: x[2])
+    wt = [0] * n
+    tat = [0] * n
+    for i in range(1, n):
+        wt[i] = wt[i-1] + processes[i-1][2]
+    for i in range(n):
+        tat[i] = wt[i] + processes[i][2]
+    avg_wt = sum(wt) / n
+    avg_tat = sum(tat) / n
+    return wt, tat, avg_wt, avg_tat
+
+def priority_scheduling(processes):
+    n = len(processes)
+    processes.sort(key=lambda x: x[3])
+    wt = [0] * n
+    tat = [0] * n
+    for i in range(1, n):
+        wt[i] = wt[i-1] + processes[i-1][2]
+    for i in range(n):
+        tat[i] = wt[i] + processes[i][2]
+    avg_wt = sum(wt) / n
+    avg_tat = sum(tat) / n
+    return wt, tat, avg_wt, avg_tat
+
+def display_result(name, processes, wt, tat, avg_wt, avg_tat):
+    print(f"\n{name} Scheduling:")
+    print("PID\tAT\tBT\tWT\tTAT")
+    for i in range(len(processes)):
+        print(f"{processes[i][0]}\t{processes[i][1]}\t{processes[i][2]}\t{wt[i]}\t{tat[i]}")
+    print(f"Average Waiting Time: {avg_wt}")
+    print(f"Average Turnaround Time: {avg_tat}")
+
+def main():
+    processes = [
+        [1, 0, 5, 2],
+        [2, 1, 3, 1],
+        [3, 2, 8, 4],
+        [4, 3, 6, 3]
+    ]
+
+    fcfs_p = sorted(processes, key=lambda x: x[1])
+    wt, tat, avg_wt, avg_tat = fcfs(fcfs_p)
+    display_result("FCFS", fcfs_p, wt, tat, avg_wt, avg_tat)
+
+    sjf_p = sorted(processes, key=lambda x: x[2])
+    wt, tat, avg_wt, avg_tat = sjf(sjf_p)
+    display_result("SJF", sjf_p, wt, tat, avg_wt, avg_tat)
+
+    prio_p = sorted(processes, key=lambda x: x[3])
+    wt, tat, avg_wt, avg_tat = priority_scheduling(prio_p)
+    display_result("Priority", prio_p, wt, tat, avg_wt, avg_tat)
+
+main()
