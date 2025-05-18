@@ -1,0 +1,53 @@
+import threading
+import time
+import random
+
+# Base class for threads (shows Inheritance & Polymorphism)
+class WorkerThread(threading.Thread):
+    def __init__(self, buffer, lock):
+        super().__init__()
+        self.buffer = buffer
+        self.lock = lock
+
+    def run(self):
+        raise NotImplementedError("Subclasses must implement run()")
+
+# Producer class (Inherits WorkerThread)
+class Producer(WorkerThread):
+    def run(self):
+        for _ in range(5):
+            item = random.randint(1, 100)
+            with self.lock:  # Concurrency control
+                self.buffer.append(item)
+                print(f"Producer {self.name} produced: {item}")
+            time.sleep(random.random())  # Simulate work
+
+# Consumer class (Inherits WorkerThread)
+class Consumer(WorkerThread):
+    def run(self):
+        for _ in range(5):
+            with self.lock:
+                if self.buffer:
+                    item = self.buffer.pop(0)
+                    print(f"Consumer {self.name} consumed: {item}")
+                else:
+                    print(f"Consumer {self.name} found buffer empty")
+            time.sleep(random.random())  # Simulate work
+
+# Encapsulation: buffer and lock managed inside a function/class
+def main():
+    buffer = []
+    lock = threading.Lock()
+
+    producers = [Producer(buffer, lock) for _ in range(2)]
+    consumers = [Consumer(buffer, lock) for _ in range(2)]
+
+    for p in producers + consumers:
+        p.start()
+    for p in producers + consumers:
+        p.join()
+
+    print("Processing complete.")
+
+if __name__ == "__main__":
+    main()
