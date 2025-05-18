@@ -1,0 +1,75 @@
+# Address Book Program in Python
+
+address_book = []
+
+def create_address_book():
+    global address_book
+    address_book = []
+    print("Address book created successfully!")
+
+def view_address_book():
+    if not address_book:
+        print("Address book is empty.")
+    else:
+        print("Address Book:")
+        for i, record in enumerate(address_book):
+            print(f"{i+1}. Name: {record['name']}, Phone: {record['phone']}, Email: {record['email']}")
+
+def insert_record():
+    name = input("Enter name: ")
+    phone = input("Enter phone number: ")
+    email = input("Enter email: ")
+    address_book.append({"name": name, "phone": phone, "email": email})
+    print("Record inserted successfully!")
+
+def delete_record():
+    name = input("Enter the name of the record to delete: ")
+    for record in address_book:
+        if record["name"].lower() == name.lower():
+            address_book.remove(record)
+            print("Record deleted successfully!")
+            return
+    print("Record not found.")
+
+def modify_record():
+    name = input("Enter the name of the record to modify: ")
+    for record in address_book:
+        if record["name"].lower() == name.lower():
+            new_phone = input("Enter new phone number: ")
+            new_email = input("Enter new email: ")
+            record["phone"] = new_phone
+            record["email"] = new_email
+            print("Record modified successfully!")
+            return
+    print("Record not found.")
+
+def main():
+    while True:
+        print("\n--- Address Book Menu ---")
+        print("a) Create Address Book")
+        print("b) View Address Book")
+        print("c) Insert Record")
+        print("d) Delete a Record")
+        print("e) Modify a Record")
+        print("f) Exit")
+
+        choice = input("Enter your choice (a-f): ").lower()
+
+        if choice == 'a':
+            create_address_book()
+        elif choice == 'b':
+            view_address_book()
+        elif choice == 'c':
+            insert_record()
+        elif choice == 'd':
+            delete_record()
+        elif choice == 'e':
+            modify_record()
+        elif choice == 'f':
+            print("Exiting program. Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please select a valid option.")
+
+if __name__ == "__main__":
+    main()
