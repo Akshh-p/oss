@@ -1,0 +1,16 @@
+# Linux CPU and Process Management Commands
+# ----------- CPU Information -----------
+
+lscpu                     # Displays CPU architecture details (cores, threads, model, etc.)
+cat /proc/cpuinfo         # Provides detailed information about each CPU core
+top                       # Real-time view of CPU usage by processes
+htop                      # Enhanced version of top with a better UI (if installed via: sudo apt install htop)
+
+
+# ----------- Process Management -----------
+
+ps aux                    # Lists all running processes with full details
+top                       # Real-time process and resource monitor (CPU, memory, etc.)
+htop                      # Interactive process viewer (scrollable and filterable, if installed)
+kill PID                  # Terminates a process by its PID (replace PID with actual process ID)
+killall process_name      # Terminates all processes with the given name (replace process_name with actual name)
